@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bookmall.book.vo.BookVo;
 import bookmall.cart.vo.CartVo;
 import bookmall.order.vo.OrderBookVo;
 import bookmall.order.vo.OrderVo;
@@ -85,47 +86,7 @@ public class OrderDao {
 		return result;
 	}
 
-	public Long lastPK(Long memberNo) {
-		Long result = null;
-		// 자원정리
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			conn = getConnection();
-
-			String sql = " select no from orders where member_no = ? order by no desc limit 1  ";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setLong(1, memberNo);
-
-			rs = pstmt.executeQuery();
-
-			while (rs.next()) {
-				result = rs.getLong(1);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("Error : " + e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	public boolean insertBookOrder(List<CartVo> cartList, Long memberNo, Long lastPK) {
+	public boolean insertBookOrder(List<CartVo> cartList, Long lastPK) {
 		boolean result = false;
 
 		Connection conn = null;
@@ -165,18 +126,20 @@ public class OrderDao {
 		return result;
 	}
 
-	public boolean insertOrder(OrderVo vo) {
-		boolean result = false;
+	public OrderVo insertOrder(OrderVo vo) {
+		OrderVo result = new OrderVo();
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
+		ResultSet rs = null;
 
 		try {
 			conn = getConnection();
 
 			String sql = " insert into orders(no, order_no, address, total_price, member_no)  "
 					+ "      values(null, concat(DATE_FORMAT(now(),'%Y%m%d'), '-',  "
-					+ "        lpad( ((select count(*) from orders ALIAS_FOR_SUBQUERY )+1), '5', '0' )), "
+					+ "        lpad( ((select count(*) from orders ALIAS_FOR_SUBQUERY"
+					+ " where DATE_FORMAT(today, '%y%m%d') = DATE_FORMAT(now(), '%y%m%d') )+1), '5', '0' )), "
 					+ "       ?, " + "       (select sum(amount*price)\r\n" + 
 							"  from cart c, book b " + 
 							"  where c.book_no = b.no  and member_no = ?), ? )";
@@ -185,9 +148,17 @@ public class OrderDao {
 			pstmt.setString(1, vo.getAddress());
 			pstmt.setLong(2, vo.getMemberNo());
 			pstmt.setLong(3, vo.getMemberNo());
-
-			int count = pstmt.executeUpdate();
-			result = count == 1;
+			pstmt.executeUpdate();
+			
+			
+			sql = " select LAST_INSERT_ID() ";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			Long lastPK = null;
+			while(rs.next()) {
+				lastPK = rs.getLong(1);
+			}
+			result.setLastPK(lastPK);
 
 		} catch (SQLException e) {
 			System.out.println("ERROR! : " + e);
@@ -198,6 +169,9 @@ public class OrderDao {
 				}
 				if (conn != null) {
 					conn.close();
+				}
+				if (rs != null) {
+					rs.close();
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();

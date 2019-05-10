@@ -7,7 +7,10 @@ import bookmall.category.vo.CategoryVo;
 public class CategoryDaoTest {
 
 	public static void main(String[] args) {
-		insert("요리");
+		insert("인문");
+		insert("정치/사회");
+		insert("컴퓨터/IT");
+		insert("가정/육아");
 		getListTest();
 
 	}
@@ -17,13 +20,16 @@ public class CategoryDaoTest {
 		vo.setName(name);
 		
 		new CategoryDao().insertCategory(vo);
+		System.out.println("카테고리 등록이 완료되었습니다.");
 	}
 
 	public static void getListTest() {
-		List<CategoryVo> list = new CategoryDao().getCategoryList();
-		for (CategoryVo vo : list) {
-			System.out.println(vo);
+		List<CategoryVo> categoryList = new CategoryDao().getCategoryList();
+		System.out.println("\n----------------    [카테고리]    ---------------");
+		for(CategoryVo vo : categoryList) {
+			System.out.println("카테고리 번호: " + vo.getNo() +", 이름 : " + vo.getName());
 		}
+		System.out.println("-----------------------------------------------");
 	}
 
 }

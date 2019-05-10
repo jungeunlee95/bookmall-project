@@ -10,6 +10,8 @@ public class CartVo {
 	private String bookTitle;
 	private String memberName;
 	private Long totalPrice;
+	private Long lastPK;
+	
 
 	public CartVo() {
 		super();
@@ -79,10 +81,19 @@ public class CartVo {
 		this.memberName = memberName;
 	}
 
+	public Long getLastPK() {
+		return lastPK;
+	}
+
+	public void setLastPK(Long lastPK) {
+		this.lastPK = lastPK;
+	}
+
 	@Override
 	public String toString() {
 		return "CartVo [no=" + no + ", bookNo=" + bookNo + ", memberNo=" + memberNo + ", amount=" + amount
-				+ ", bookTitle=" + bookTitle + ", memberName=" + memberName + ", totalPrice=" + totalPrice + "]";
+				+ ", bookTitle=" + bookTitle + ", memberName=" + memberName + ", totalPrice=" + totalPrice + ", lastPK="
+				+ lastPK + "]";
 	}
 
 

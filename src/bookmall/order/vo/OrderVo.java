@@ -9,6 +9,7 @@ public class OrderVo {
 	private String date;
 
 	private Long memberNo;
+	private Long lastPK;
 
 	private String memberName;
 
@@ -80,10 +81,21 @@ public class OrderVo {
 		this.memberName = memberName;
 	}
 
+	public Long getLastPK() {
+		return lastPK;
+	}
+
+	public void setLastPK(Long lastPK) {
+		this.lastPK = lastPK;
+	}
+
 	@Override
 	public String toString() {
 		return "OrderVo [no=" + no + ", orderNo=" + orderNo + ", address=" + address + ", totalPrice=" + totalPrice
-				+ ", date=" + date + ", memberNo=" + memberNo + ", memberName=" + memberName + "]";
+				+ ", date=" + date + ", memberNo=" + memberNo + ", lastPK=" + lastPK + ", memberName=" + memberName
+				+ "]";
 	}
+
+
 
 }
